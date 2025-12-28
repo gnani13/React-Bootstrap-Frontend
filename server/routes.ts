@@ -105,5 +105,20 @@ export async function registerRoutes(
     res.json(stats);
   });
 
+  app.get("/api/volunteer/my-assignments", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const list = await storage.getVolunteerAssignments(userId);
+    res.json(list || []);
+  });
+
+  app.post("/api/volunteer/assignment/:id/status", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const updated = await storage.updateAssignmentStatus(Number(req.params.id), req.body.status);
+    if (!updated) return res.status(400).json({ message: "Could not update status" });
+    res.json(updated);
+  });
+
   return httpServer;
 }

@@ -41,7 +41,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createDonation(donation: InsertDonation & { donorId: number }): Promise<Donation> {
-    const [newDonation] = await db.insert(donations).values(donation).returning();
+    const [newDonation] = await db.insert(donations).values({
+      ...donation,
+      status: donation.status || "AVAILABLE",
+    }).returning();
     return newDonation;
   }
 
