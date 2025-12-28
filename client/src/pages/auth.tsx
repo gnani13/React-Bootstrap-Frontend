@@ -23,7 +23,7 @@ export default function AuthPage() {
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
               <Heart className="w-6 h-6 fill-current" />
             </div>
-            <span className="font-display font-bold text-2xl tracking-tight text-white">FoodConnect</span>
+            <span className="font-display font-bold text-2xl tracking-tight text-white">Re-Nourish</span>
           </div>
         </div>
 
@@ -37,7 +37,7 @@ export default function AuthPage() {
         </div>
 
         <div className="relative z-10 text-sm text-secondary-foreground/40 font-medium">
-          © 2024 FoodConnect Platform
+          © 2024 Re-Nourish Platform
         </div>
       </div>
 

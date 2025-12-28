@@ -36,7 +36,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
           <div>
             <h1 className="font-display font-bold text-xl tracking-tight leading-none text-foreground">
-              FoodConnect
+              Re-Nourish
             </h1>
             <span className="text-xs text-muted-foreground font-medium">Waste Less. Feed More.</span>
           </div>
