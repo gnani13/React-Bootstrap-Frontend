@@ -88,10 +88,11 @@ export function useAuth() {
       setLocation('/dashboard');
     },
     onError: (error: any) => {
+      console.error("Registration error:", error);
       toast({
         variant: "destructive",
         title: "Registration failed",
-        description: error.response?.data?.message || "Could not create account",
+        description: error.response?.data?.message || error.message || "Could not create account",
       });
     },
   });

@@ -33,9 +33,9 @@ export const assignments = pgTable("assignments", {
 });
 
 // Schemas
-export const insertUserSchema = createInsertSchema(users);
-export const insertDonationSchema = createInsertSchema(donations);
-export const insertAssignmentSchema = createInsertSchema(assignments);
+export const insertUserSchema = createInsertSchema(users).omit({ id: true });
+export const insertDonationSchema = createInsertSchema(donations).omit({ id: true, createdAt: true });
+export const insertAssignmentSchema = createInsertSchema(assignments).omit({ id: true });
 
 // Types
 export type User = typeof users.$inferSelect;

@@ -185,6 +185,7 @@ function RegisterForm({ onSubmit, isLoading }: { onSubmit: (data: InsertUser) =>
           <option value="DONOR">Donor (I have food to give)</option>
           <option value="NGO">NGO (I distribute food)</option>
           <option value="VOLUNTEER">Volunteer (I deliver food)</option>
+          <option value="ADMIN">Admin (System Administrator)</option>
         </select>
         {form.formState.errors.role && (
           <p className="text-xs text-destructive">{form.formState.errors.role.message}</p>
