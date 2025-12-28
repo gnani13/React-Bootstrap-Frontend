@@ -17,6 +17,7 @@ export function useMyDonations() {
         return [] as Donation[];
       }
     },
+    initialData: [] as Donation[],
   });
 }
 
@@ -53,6 +54,7 @@ export function useAvailableDonations() {
         ] as Donation[];
       }
     },
+    initialData: [] as Donation[],
   });
 }
 
@@ -62,12 +64,13 @@ export function useNgoMyDonations() {
     queryFn: async () => {
       try {
         const res = await api.get<Donation[]>('/api/donations/ngo/my-donations');
-        return res.data;
+        return Array.isArray(res.data) ? res.data : [];
       } catch (error) {
         console.warn("Backend unavailable, using mock data for NGO My Donations");
         return [] as Donation[];
       }
     },
+    initialData: [] as Donation[],
   });
 }
 

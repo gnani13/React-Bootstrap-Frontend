@@ -85,6 +85,13 @@ export async function registerRoutes(
     res.json(updated);
   });
 
+  app.get("/api/donations/ngo/my-donations", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const list = await storage.getNgoDonations(userId);
+    res.json(list || []);
+  });
+
   // Analytics
   app.get("/api/analytics/dashboard", async (req, res) => {
     const stats = await storage.getDashboardStats();
