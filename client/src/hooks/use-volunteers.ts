@@ -13,6 +13,35 @@ export function useMyAssignments() {
   });
 }
 
+export function useAvailableAssignments() {
+  return useQuery({
+    queryKey: ['assignments', 'available'],
+    queryFn: async () => {
+      const res = await api.get<Donation[]>('/api/volunteer/available-assignments');
+      return Array.isArray(res.data) ? res.data : [];
+    },
+  });
+}
+
+export function useClaimAssignment() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (donationId: number) => {
+      const res = await api.post<Assignment>(`/api/volunteer/assignment/${donationId}/claim`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assignments'] });
+      toast({
+        title: "Assignment Claimed",
+        description: "You have successfully claimed the delivery task.",
+      });
+    },
+  });
+}
+
 export function useUpdateAssignmentStatus() {
   const queryClient = useQueryClient();
   const { toast } = useToast();

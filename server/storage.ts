@@ -17,6 +17,8 @@ export interface IStorage {
 
   // Assignments/Volunteer
   getVolunteerAssignments(volunteerId: number): Promise<Assignment[]>;
+  getAvailableAssignments(): Promise<Donation[]>;
+  claimAssignment(donationId: number, volunteerId: number): Promise<Assignment>;
   updateAssignmentStatus(id: number, status: string): Promise<Assignment | undefined>;
 
   // Analytics
@@ -65,20 +67,30 @@ export class DatabaseStorage implements IStorage {
       .set({ status: "CLAIMED", claimedByNgoId: ngoId })
       .where(and(eq(donations.id, id), eq(donations.status, "AVAILABLE")))
       .returning();
-
-    if (updated) {
-      // Auto-assign to the first available volunteer for now to make it "work"
-      // In a real app, this would be a separate assignment step
-      const [volunteer] = await db.select().from(users).where(eq(users.role, "VOLUNTEER")).limit(1);
-      if (volunteer) {
-        await db.insert(assignments).values({
-          donationId: updated.id,
-          volunteerId: volunteer.id,
-          status: "PENDING"
-        });
-      }
-    }
     return updated;
+  }
+
+  async getAvailableAssignments(): Promise<Donation[]> {
+    // Return donations claimed by NGOs but not yet assigned to any volunteer
+    const existingAssignments = await db.select({ donationId: assignments.donationId }).from(assignments);
+    const assignedIds = existingAssignments.map(a => a.donationId);
+    
+    const available = await db.select().from(donations).where(
+      and(
+        eq(donations.status, "CLAIMED")
+      )
+    );
+    
+    return available.filter(d => !assignedIds.includes(d.id));
+  }
+
+  async claimAssignment(donationId: number, volunteerId: number): Promise<Assignment> {
+    const [newAssignment] = await db.insert(assignments).values({
+      donationId,
+      volunteerId,
+      status: "PENDING"
+    }).returning();
+    return newAssignment;
   }
 
   async getVolunteerAssignments(volunteerId: number): Promise<Assignment[]> {
