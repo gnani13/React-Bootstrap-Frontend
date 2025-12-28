@@ -21,7 +21,7 @@ export default function MyAssignments() {
         <div className="flex justify-center py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
-      ) : assignments && assignments.length > 0 ? (
+      ) : Array.isArray(assignments) && assignments.length > 0 ? (
         <div className="space-y-4">
           {assignments.map((assignment) => (
             <div key={assignment.id} className="bg-card border border-border rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">

@@ -65,6 +65,19 @@ export class DatabaseStorage implements IStorage {
       .set({ status: "CLAIMED", claimedByNgoId: ngoId })
       .where(and(eq(donations.id, id), eq(donations.status, "AVAILABLE")))
       .returning();
+
+    if (updated) {
+      // Auto-assign to the first available volunteer for now to make it "work"
+      // In a real app, this would be a separate assignment step
+      const [volunteer] = await db.select().from(users).where(eq(users.role, "VOLUNTEER")).limit(1);
+      if (volunteer) {
+        await db.insert(assignments).values({
+          donationId: updated.id,
+          volunteerId: volunteer.id,
+          status: "PENDING"
+        });
+      }
+    }
     return updated;
   }
 
