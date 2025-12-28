@@ -54,22 +54,8 @@ export function useAuth() {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      try {
-        const res = await api.post<AuthResponse>('/api/auth/login', credentials);
-        return res.data;
-      } catch (error) {
-        // Mock login for demo purposes if backend fails
-        console.warn("Backend unavailable, using mock login");
-        return {
-          token: "mock-token",
-          user: {
-            ...MOCK_USER,
-            email: credentials.email,
-            role: credentials.email.includes('ngo') ? 'NGO' : 
-                  credentials.email.includes('volunteer') ? 'VOLUNTEER' : 'DONOR'
-          }
-        };
-      }
+      const res = await api.post<AuthResponse>('/api/auth/login', credentials);
+      return res.data;
     },
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);
@@ -81,16 +67,8 @@ export function useAuth() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: InsertUser) => {
-      try {
-        const res = await api.post<AuthResponse>('/api/auth/register', data);
-        return res.data;
-      } catch (error) {
-        console.warn("Backend unavailable, using mock registration");
-        return {
-          token: "mock-token",
-          user: { ...MOCK_USER, ...data, id: Math.floor(Math.random() * 1000) }
-        };
-      }
+      const res = await api.post<AuthResponse>('/api/auth/register', data);
+      return res.data;
     },
     onSuccess: (data) => {
       localStorage.setItem('token', data.token);

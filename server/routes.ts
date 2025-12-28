@@ -1,17 +1,101 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { api as routeContract } from "@shared/routes";
+import { insertUserSchema, loginCredentialsSchema } from "@shared/schema";
+import session from "express-session";
+import MemoryStore from "memorystore";
+
+const SessionStore = MemoryStore(session);
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // This node server primarily serves the React frontend.
-  // API requests from the frontend should be directed to the Spring Boot backend at http://localhost:8080
   
-  // We can add a simple health check here
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok", message: "Frontend host server running" });
+  app.use(session({
+    cookie: { maxAge: 86400000 },
+    store: new SessionStore({ checkPeriod: 86400000 }),
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET || 'dev-secret'
+  }));
+
+  // Auth Routes
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const data = insertUserSchema.parse(req.body);
+      const existing = await storage.getUserByUsername(data.email);
+      if (existing) return res.status(400).json({ message: "User exists" });
+      const user = await storage.createUser(data);
+      (req.session as any).userId = user.id;
+      res.json({ token: "fake-jwt-token", user });
+    } catch (e) {
+      res.status(400).json({ message: "Invalid data" });
+    }
+  });
+
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const data = loginCredentialsSchema.parse(req.body);
+      const user = await storage.getUserByUsername(data.email);
+      if (!user || user.password !== data.password) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      (req.session as any).userId = user.id;
+      res.json({ token: "fake-jwt-token", user });
+    } catch (e) {
+      res.status(400).json({ message: "Invalid data" });
+    }
+  });
+
+  app.get("/api/auth/profile", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Not logged in" });
+    const user = await storage.getUser(userId);
+    if (!user) return res.status(401).json({ message: "User not found" });
+    res.json(user);
+  });
+
+  // Donation Routes
+  app.post("/api/donations", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const donation = await storage.createDonation({ ...req.body, donorId: userId });
+    res.status(201).json(donation);
+  });
+
+  app.get("/api/donations/my-donations", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const list = await storage.getDonationsByDonor(userId);
+    res.json(list);
+  });
+
+  app.get("/api/donations/available", async (req, res) => {
+    const list = await storage.getAvailableDonations();
+    res.json(list);
+  });
+
+  app.post("/api/donations/:id/claim", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const updated = await storage.claimDonation(Number(req.params.id), userId);
+    if (!updated) return res.status(400).json({ message: "Could not claim" });
+    res.json(updated);
+  });
+
+  // Analytics
+  app.get("/api/analytics/dashboard", async (req, res) => {
+    const stats = await storage.getDashboardStats();
+    res.json(stats);
+  });
+
+  app.get("/api/analytics/user-stats", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+    const stats = await storage.getUserStats(userId);
+    res.json(stats);
   });
 
   return httpServer;
