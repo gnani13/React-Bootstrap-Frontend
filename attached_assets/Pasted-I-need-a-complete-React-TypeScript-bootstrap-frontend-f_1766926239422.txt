@@ -1,0 +1,49 @@
+I need a complete React + TypeScript + bootstrap frontend for my Spring Boot food donation platform "ReNourish".
+
+MY SPRING BOOT BACKEND is already built and running at: http://localhost:8080
+
+BACKEND API ENDPOINTS:
+- POST   /api/auth/register     - Register user
+- POST   /api/auth/login        - Login user
+- GET    /api/auth/profile      - Get user profile
+- POST   /api/donations         - Create donation (DONOR role)
+- GET    /api/donations/my-donations - Get my donations (DONOR)
+- GET    /api/donations/available    - Get available donations (public)
+- POST   /api/donations/{id}/claim   - Claim donation (NGO role)
+- GET    /api/donations/ngo/my-donations - Get NGO's claimed donations
+- GET    /api/analytics/dashboard    - Get dashboard stats
+- GET    /api/analytics/user-stats   - Get user stats
+- GET    /api/volunteer/my-assignments - Get volunteer assignments
+- POST   /api/volunteer/assignment/{id}/status - Update assignment status
+
+REQUIREMENTS:
+1. use React
+2. TypeScript for type safety
+3. Normal css and bootstrap for styling
+4. React Router for navigation
+5. React Query for data fetching
+6. React Hook Form + Yup for form validation
+7. Axios for API calls with interceptors
+8. JWT authentication (token in localStorage)
+9. Role-based routing (DONOR, NGO, VOLUNTEER, ADMIN)
+10. Toast notifications for errors/success
+
+PAGES NEEDED:
+- Login page (with sample users: donor@example.com/password123, ngo@example.com/password123, volunteer@example.com/password123)
+- Register page (with role selection)
+- Dashboard (role-specific views)
+- Donor: Create donation, My donations
+- NGO: Available donations, Claim donations
+- Volunteer: Assignments, Update delivery status
+- Analytics (charts with Recharts)
+
+IMPORTANT: NO MOCK DATA! Must connect to real Spring Boot backend at localhost:8080
+
+Please provide:
+1. Complete folder structure
+2. All configuration files 
+3. All TypeScript files with proper interfaces
+4. All components and pages
+5. Complete API service layer
+6. Ready-to-run code  
+also make sure the interface looks good, not some default stuff, give me in proper website design with good templete
