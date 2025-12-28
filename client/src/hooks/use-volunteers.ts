@@ -7,22 +7,9 @@ export function useMyAssignments() {
   return useQuery({
     queryKey: ['assignments', 'my'],
     queryFn: async () => {
-      try {
-        const res = await api.get<Assignment[]>('/api/volunteer/my-assignments');
-        return res.data;
-      } catch (error) {
-        console.warn("Backend unavailable, using mock assignments");
-        return [
-          {
-            id: 1,
-            volunteerId: 1,
-            donationId: 1,
-            status: "PENDING"
-          }
-        ] as Assignment[];
-      }
+      const res = await api.get<Assignment[]>('/api/volunteer/my-assignments');
+      return Array.isArray(res.data) ? res.data : [];
     },
-    initialData: [] as Assignment[],
   });
 }
 

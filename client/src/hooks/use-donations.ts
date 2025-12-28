@@ -9,15 +9,9 @@ export function useMyDonations() {
   return useQuery({
     queryKey: ['donations', 'my'],
     queryFn: async () => {
-      try {
-        const res = await api.get<Donation[]>('/api/donations/my-donations');
-        return res.data;
-      } catch (error) {
-        console.warn("Backend unavailable, using mock data for My Donations");
-        return [] as Donation[];
-      }
+      const res = await api.get<Donation[]>('/api/donations/my-donations');
+      return Array.isArray(res.data) ? res.data : [];
     },
-    initialData: [] as Donation[],
   });
 }
 
@@ -25,36 +19,9 @@ export function useAvailableDonations() {
   return useQuery({
     queryKey: ['donations', 'available'],
     queryFn: async () => {
-      try {
-        const res = await api.get<Donation[]>('/api/donations/available');
-        return res.data;
-      } catch (error) {
-        console.warn("Backend unavailable, using mock data for Available Donations");
-        return [
-          {
-            id: 1,
-            title: "Fresh Vegetables",
-            description: "A crate of organic carrots and spinach",
-            quantity: "5kg",
-            pickupAddress: "123 Main St",
-            status: "AVAILABLE",
-            donorId: 1,
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: 2,
-            title: "Bread and Pastries",
-            description: "Daily surplus from local bakery",
-            quantity: "10 items",
-            pickupAddress: "456 Bakery Ln",
-            status: "AVAILABLE",
-            donorId: 1,
-            createdAt: new Date().toISOString()
-          }
-        ] as Donation[];
-      }
+      const res = await api.get<Donation[]>('/api/donations/available');
+      return Array.isArray(res.data) ? res.data : [];
     },
-    initialData: [] as Donation[],
   });
 }
 
@@ -62,15 +29,9 @@ export function useNgoMyDonations() {
   return useQuery({
     queryKey: ['donations', 'ngo-my'],
     queryFn: async () => {
-      try {
-        const res = await api.get<Donation[]>('/api/donations/ngo/my-donations');
-        return Array.isArray(res.data) ? res.data : [];
-      } catch (error) {
-        console.warn("Backend unavailable, using mock data for NGO My Donations");
-        return [] as Donation[];
-      }
+      const res = await api.get<Donation[]>('/api/donations/ngo/my-donations');
+      return Array.isArray(res.data) ? res.data : [];
     },
-    initialData: [] as Donation[],
   });
 }
 
