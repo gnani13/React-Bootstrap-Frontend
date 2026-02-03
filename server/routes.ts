@@ -24,28 +24,34 @@ export async function registerRoutes(
   // Auth Routes
   app.post("/api/auth/register", async (req, res) => {
     try {
+      console.log("Register request body:", JSON.stringify(req.body));
       const data = insertUserSchema.parse(req.body);
+      console.log("Parsed data:", data);
       const existing = await storage.getUserByUsername(data.email);
       if (existing) return res.status(400).json({ message: "User exists" });
       const user = await storage.createUser(data);
       (req.session as any).userId = user.id;
       res.json({ token: "fake-jwt-token", user });
-    } catch (e) {
-      res.status(400).json({ message: "Invalid data" });
+    } catch (e: any) {
+      console.error("Registration error:", e);
+      res.status(400).json({ message: "Invalid data", details: e.message });
     }
   });
 
   app.post("/api/auth/login", async (req, res) => {
     try {
+      console.log("Login request body:", JSON.stringify(req.body));
       const data = loginCredentialsSchema.parse(req.body);
+      console.log("Parsed data:", data);
       const user = await storage.getUserByUsername(data.email);
       if (!user || user.password !== data.password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       (req.session as any).userId = user.id;
       res.json({ token: "fake-jwt-token", user });
-    } catch (e) {
-      res.status(400).json({ message: "Invalid data" });
+    } catch (e: any) {
+      console.error("Login error:", e);
+      res.status(400).json({ message: "Invalid data", details: e.message });
     }
   });
 

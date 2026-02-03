@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'DONOR'
+);
+
+CREATE TABLE IF NOT EXISTS donations (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  quantity TEXT NOT NULL,
+  pickup_address TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'AVAILABLE',
+  donor_id INTEGER NOT NULL,
+  claimed_by_ngo_id INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS assignments (
+  id SERIAL PRIMARY KEY,
+  volunteer_id INTEGER NOT NULL,
+  donation_id INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'PENDING'
+);

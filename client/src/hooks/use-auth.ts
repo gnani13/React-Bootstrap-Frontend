@@ -61,7 +61,12 @@ export function useAuth() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       queryClient.setQueryData(['auth', 'user'], data.user);
+      toast({ title: "Success", description: "Logged in successfully" });
       setLocation('/dashboard');
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || "Login failed";
+      toast({ title: "Error", description: message, variant: "destructive" });
     }
   });
 
@@ -74,7 +79,12 @@ export function useAuth() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       queryClient.setQueryData(['auth', 'user'], data.user);
+      toast({ title: "Success", description: "Account created successfully" });
       setLocation('/dashboard');
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || "Registration failed";
+      toast({ title: "Error", description: message, variant: "destructive" });
     }
   });
 
