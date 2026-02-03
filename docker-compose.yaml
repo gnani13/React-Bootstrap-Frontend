@@ -6,6 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres123
       POSTGRES_DB: donations_db
+      POSTGRES_INITDB_ARGS: "-c password_encryption=scram-sha-256"
     ports:
       - "5432:5432"
     volumes:
@@ -25,7 +26,7 @@ services:
       - "5000:5000"
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/donations_db
+      DATABASE_URL: postgresql://postgres@postgres:5432/donations_db
     depends_on:
       postgres:
         condition: service_healthy
